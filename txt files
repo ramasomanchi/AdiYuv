@@ -1,0 +1,79 @@
+# Define the function to read a .txt file
+def read_txt_file("C:\Users\laksh\OneDrive\Desktop\D_imp_reg.txt"):
+    try:
+        with open("C:\Users\laksh\OneDrive\Desktop\D_imp_reg.txt", 'r') as file:
+            contents = file.read()
+        return contents
+    except FileNotFoundError:
+        print(f"The file at {"C:\Users\laksh\OneDrive\Desktop\D_imp_reg.txt"} was not found.")
+        return None
+
+# Define the function to write to a .txt file
+def write_txt_file("C:\Users\laksh\OneDrive\Desktop\D_imp_reg.txt", contents):
+    with open("C:\Users\laksh\OneDrive\Desktop\D_imp_reg.txt", 'w') as file:
+        file.write(contents)
+    print(f"Contents written to {"C:\Users\laksh\OneDrive\Desktop\D_imp_reg.txt"}.")
+
+# Define the function to process the file contents (visualise data)
+def process_contents(contents):
+    return contents.upper()
+
+# Main code
+input_file_path = 'input.txt'
+output_file_path = 'output.txt'
+
+# Read the input file
+contents = read_txt_file(input_file_path)
+
+if contents:
+    # Process the contents
+    processed_contents = process_contents(contents)
+    
+    # Write the processed contents to the output file
+    write_txt_file(output_file_path, processed_contents)
+
+
+.your-repo/
+├── .github/
+│   └── workflows/
+│       └── run-script.yml
+├── input.txt
+└── process_txt_files.py
+
+
+name: Run Python Script
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Run Python script
+        run: |
+          python process_txt_files.py
+
+      - name: Upload output file
+        uses: actions/upload-artifact@v3
+        with:
+          name: output-txt
+          path: output.txt
